@@ -21,7 +21,4 @@ public class PlayerInput : MonoBehaviour
         Fire = Input.GetButton(fireButton);
         Reload = Input.GetButtonDown(reloadButton);
     }
-
-
-
 }
