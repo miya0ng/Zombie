@@ -123,7 +123,7 @@ public class Gun : MonoBehaviour
 
             if (taret != null)
             {
-                taret.OnDamage(gunData.damage, hit.point, hit.normal);//Todo:
+                taret.OnDamage(gunData.damage, hit.point, hit.normal);//@
             }
         }
         else
@@ -136,7 +136,6 @@ public class Gun : MonoBehaviour
         {
             CurrentState = State.Empty;
         }
-
     }
 
     public bool Reload()//@

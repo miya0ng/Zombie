@@ -1,0 +1,35 @@
+using System;
+using Unity.Services.Analytics;
+using UnityEngine;
+
+public class LivingEntity : MonoBehaviour, IDamagable
+{
+    public float MaxHealth = 100f;
+    public float Health {  get; private set; }
+    public bool IsDead { get; private set; }
+
+    public event Action onDeath;
+
+    protected virtual void OnEnable()
+    {
+        IsDead = false;
+        Health = MaxHealth;
+    }
+    public virtual void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
+    {
+        Health -= damage;
+        if( Health <= 0 && !IsDead)
+        {
+            Die();
+        }
+    }
+    protected virtual void Die()
+    {
+        if (onDeath != null)
+        {
+            onDeath();
+        }
+
+        IsDead = true;
+    }
+}
