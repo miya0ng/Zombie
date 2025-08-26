@@ -1,5 +1,4 @@
-
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class PlayerShooter : MonoBehaviour
 {
@@ -43,7 +42,7 @@ public class PlayerShooter : MonoBehaviour
 
     private void OnDisable()
     {
-        // ÃÊ±â°ªÀ¸·Î µ¹¸®±âÀ§ÇØ 
+        // ì´ˆê¸°ê°’ìœ¼ë¡œ ëŒë¦¬ê¸°ìœ„í•´ 
         gunRb.linearVelocity = Vector3.zero;
         gunRb.angularVelocity = Vector3.zero;
 
@@ -70,14 +69,14 @@ public class PlayerShooter : MonoBehaviour
     {
         gunPivot.position = animator.GetIKHintPosition(AvatarIKHint.RightElbow);
 
-        // ¿ŞÂÊ
+        // ì™¼ìª½
         animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
 
         animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandMount.position);
         animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandMount.rotation);
 
-        // ¿À¸¥ÂÊ
+        // ì˜¤ë¥¸ìª½
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
 

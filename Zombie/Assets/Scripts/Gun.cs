@@ -1,9 +1,9 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    // »óÅÂÆĞÅÏ À§ÇÑ enum
+    // ìƒíƒœíŒ¨í„´ ìœ„í•œ enum
     public enum State
     {
         Ready,
@@ -42,8 +42,8 @@ public class Gun : MonoBehaviour
     private LineRenderer lineRenderer;
     private AudioSource audioSource;
 
-    public int ammoRemain; // ³²Àº ÃÑ¾Ë
-    public int magAmmo;    // ÅºÃ¢ Å©±â
+    public int ammoRemain; // ë‚¨ì€ ì´ì•Œ
+    public int magAmmo;    // íƒ„ì°½ í¬ê¸°
 
     private float lastFireTime;
 
@@ -109,7 +109,7 @@ public class Gun : MonoBehaviour
         muzzelEffect.Play();
         shellEffect.Play();
         lineRenderer.enabled = true;
-        lineRenderer.SetPosition(0, firePos.position); // (ÀÎµ¦½º, À§Ä¡)
+        lineRenderer.SetPosition(0, firePos.position); // (ì¸ë±ìŠ¤, ìœ„ì¹˜)
         lineRenderer.SetPosition(1, hitPosition);
 
         yield return new WaitForSeconds(0.1f);
@@ -130,13 +130,13 @@ public class Gun : MonoBehaviour
     {
         Vector3 hitPosition = Vector3.zero;
 
-        RaycastHit hit; // ±¸Á¶Ã¼ ¡æ ·¹ÀÌÄ³½ºÆÃ µÈ °á°ú°¡ ´ã±â´Â ±¸Á¶Ã¼
+        RaycastHit hit; // êµ¬ì¡°ì²´ â†’ ë ˆì´ìºìŠ¤íŒ… ëœ ê²°ê³¼ê°€ ë‹´ê¸°ëŠ” êµ¬ì¡°ì²´
 
-        // Physics.Raycast(½ÃÀÛÁöÁ¡, ³ª¾Æ°¡´Â ¹æÇâ, Á¤º¸¸¦ ´ãÀ» ±¸Á¶Ã¼, °Å¸®)
-        // ¡æ Ãæµ¹ÇßÀ¸¸é true ¾ÈÇßÀ¸¸é false return
+        // Physics.Raycast(ì‹œì‘ì§€ì , ë‚˜ì•„ê°€ëŠ” ë°©í–¥, ì •ë³´ë¥¼ ë‹´ì„ êµ¬ì¡°ì²´, ê±°ë¦¬)
+        // â†’ ì¶©ëŒí–ˆìœ¼ë©´ true ì•ˆí–ˆìœ¼ë©´ false return
         if (Physics.Raycast(firePos.position, firePos.forward, out hit, gunData.fireDistance))
         {
-            //hit.point Ãæµ¹ ÁöÁ¡ (À§Ä¡)
+            //hit.point ì¶©ëŒ ì§€ì  (ìœ„ì¹˜)
             hitPosition = hit.point;
 
             var target = hit.collider.GetComponent<IDamagable>();
@@ -166,7 +166,7 @@ public class Gun : MonoBehaviour
         if (currentState == State.Reloading || ammoRemain == 0 || magAmmo == gunData.magCapacity)
             return false;
 
-
+        
         StartCoroutine(CoReload());
         return true;
     }
@@ -190,7 +190,7 @@ public class Gun : MonoBehaviour
         }
 
         currentState = State.Ready;
-        Debug.Log($"{magAmmo}/{ammoRemain} << ÀçÀåÀü");
+        Debug.Log($"{magAmmo}/{ammoRemain} << ì¬ì¥ì „");
 
         //int amount = gunData.magCapacity - magAmmo;
         //int fillAmount = Mathf.Min(amount, ammoRemain);

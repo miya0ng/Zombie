@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealth : LivingEntity
@@ -43,17 +43,22 @@ public class PlayerHealth : LivingEntity
         {
             OnDamage(10f, Vector3.zero, Vector3.zero);
         }
+        healthSlider.value = Health / MaxHealth;
     }
 
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
-        if (IsDead) return;
+        if (IsDead) return; 
 
         base.OnDamage(damage, hitPoint, hitNormal);
-        healthSlider.value = Health / MaxHealth;
+       // healthSlider.value = Health / MaxHealth;
         audioSource.PlayOneShot(hitClip);
     }
 
+    public void AddHealth(float amount)
+    {
+        Health += amount;
+    }
     protected override void Die()
     {
         base.Die();

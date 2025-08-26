@@ -1,12 +1,8 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
 //public static class TagManager
 //{
 //    public static readonly string Player = "Player";
-//    public static readonly string Enemy = "Enemy";
-//    public static readonly string Item = "Item";
-//    public static readonly string Obstacle = "Obstacle";
-//    public static readonly string Projectile = "Projectile";
 //}
 
 public class PlayerMovement : MonoBehaviour
@@ -19,26 +15,24 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInput playerInput;
     private Rigidbody rb;
     private Animator animator;
+
+
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
     }
+
     private void FixedUpdate()
     {
-        //»∏¿¸
+        // ÌöåÏ†Ñ
         rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, playerInput.Roatate * rotationSpeed * Time.fixedDeltaTime, 0f));
-      
 
-        //¿Ãµø
+        // Ïù¥Îèô
         rb.MovePosition(rb.position + transform.forward * playerInput.Move * moveSpeed * Time.fixedDeltaTime);
-     
 
-        //æ÷¥œ∏ﬁ¿Ãº« º≥¡§
-        if (animator != null)
-        {
-            animator.SetFloat(MoveHash, playerInput.Move);
-        }
+        
+        animator.SetFloat(MoveHash, playerInput.Move);
     }
 }
