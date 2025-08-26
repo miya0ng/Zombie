@@ -198,4 +198,11 @@ public class Gun : MonoBehaviour
         //magAmmo += fillAmount;
         //ammoRemain -= fillAmount;
     }
+
+    public void AddAmmo(int amount)
+    {
+        ammoRemain = Mathf.Min(ammoRemain + amount, gunData.startAmmoRemain);
+
+        Debug.Log("AddAmmo");
+    }
 }

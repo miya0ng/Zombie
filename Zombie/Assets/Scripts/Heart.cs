@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Heart : MonoBehaviour
 {
-    public PlayerHealth playerHealth; //이렇게 선언하는거 맞아? 이거 player 게임업젝트 연결했음
+    public PlayerHealth playerHealth; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private void Awake()
@@ -30,7 +30,7 @@ public class Heart : MonoBehaviour
     {
         if (other.CompareTag("player"))
         {
-            playerHealth.AddHealth(10);
+          
             gameObject.SetActive(false);
         }
     }

@@ -43,22 +43,22 @@ public class PlayerHealth : LivingEntity
         {
             OnDamage(10f, Vector3.zero, Vector3.zero);
         }
-        healthSlider.value = Health / MaxHealth;
+       
     }
 
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
-        if (IsDead) return; 
+        if (IsDead) return;
 
         base.OnDamage(damage, hitPoint, hitNormal);
-       // healthSlider.value = Health / MaxHealth;
+        healthSlider.value = Health / MaxHealth;
         audioSource.PlayOneShot(hitClip);
     }
 
-    public void AddHealth(float amount)
-    {
-        Health += amount;
-    }
+    //public void AddHealth(float amount)
+    //{
+    //    Health += amount;
+    //}
     protected override void Die()
     {
         base.Die();
@@ -69,5 +69,12 @@ public class PlayerHealth : LivingEntity
 
         movement.enabled = false;
         shooter.enabled = false;
+    }
+
+    public void Heal(int amount)
+    {
+        Health = Mathf.Min(Health + amount, MaxHealth);
+        Debug.Log("heal");
+        healthSlider.value = Health / MaxHealth;
     }
 }

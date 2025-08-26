@@ -6,7 +6,7 @@ public class LivingEntity : MonoBehaviour, IDamagable
     public float MaxHealth = 100f;
 
     public float Health { get; protected set; }
-    public bool IsDead { get; private set; }
+    public bool IsDead { get; protected set; }
 
     public event Action OnDeath;
 
