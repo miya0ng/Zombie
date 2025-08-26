@@ -1,10 +1,9 @@
 using System.Collections;
-using System.Data;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Gun : MonoBehaviour
 {
+    // 상태패턴 위한 enum
     public enum State
     {
         Ready,
@@ -13,8 +12,6 @@ public class Gun : MonoBehaviour
     }
 
     private State currentState = State.Ready;
-    //상태별로 실행할 업데이트 만들어야함
-    //바뀔 때 실행되는 애 자리 잡는거 필요
 
     public State CurrentState
     {
@@ -25,13 +22,12 @@ public class Gun : MonoBehaviour
             switch (currentState)
             {
                 case State.Ready:
-                    UpdateReady();
                     break;
+
                 case State.Empty:
-                    UpdateEmpty();
                     break;
+
                 case State.Reloading:
-                    UpdateReloading();
                     break;
             }
         }
@@ -39,23 +35,24 @@ public class Gun : MonoBehaviour
 
     public GunData gunData;
 
-    public ParticleSystem muzzleEffect;
+    public ParticleSystem muzzelEffect;
     public ParticleSystem shellEffect;
+    public Transform firePos;
 
     private LineRenderer lineRenderer;
     private AudioSource audioSource;
 
-    public Transform firePosition;
-
-    public int ammoRemain;
-
-    public int magAmmo;
+    public int ammoRemain; // 남은 총알
+    public int magAmmo;    // 탄창 크기
 
     private float lastFireTime;
+
+
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
         lineRenderer = GetComponent<LineRenderer>();
+        audioSource = GetComponent<AudioSource>();
+
         lineRenderer.enabled = false;
         lineRenderer.positionCount = 2;
     }
@@ -65,40 +62,59 @@ public class Gun : MonoBehaviour
         ammoRemain = gunData.startAmmoRemain;
         magAmmo = gunData.magCapacity;
         lastFireTime = 0f;
+
         CurrentState = State.Ready;
     }
+
     private void Update()
     {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Fire();
+        }
 
-    }
-    private IEnumerator ShotEffect(Vector3 hitPosition)
-    {
-        audioSource.PlayOneShot(gunData.shootClip);
-
-        muzzleEffect.Play();
-        shellEffect.Play();
-        lineRenderer.enabled = true;
-        lineRenderer.SetPosition(0, firePosition.position);
-        lineRenderer.SetPosition(1, hitPosition);
-        Vector3 endPos = firePosition.position + firePosition.forward * 10f;
-
-        lineRenderer.SetPosition(1, endPos);
-        yield return new WaitForSeconds(1f);
-        lineRenderer.enabled = false;
+        switch (currentState)
+        {
+            case State.Ready:
+                UpdateReady();
+                break;
+            case State.Empty:
+                UpdateEmpty();
+                break;
+            case State.Reloading:
+                UpdateReloading();
+                break;
+        }
     }
 
     private void UpdateReady()
     {
-        // 총쏘기 
+
     }
 
     private void UpdateEmpty()
     {
 
     }
+
     private void UpdateReloading()
     {
 
+    }
+
+    private IEnumerator CoShotEffect(Vector3 hitPosition)
+    {
+        audioSource.PlayOneShot(gunData.shootClip);
+
+        muzzelEffect.Play();
+        shellEffect.Play();
+        lineRenderer.enabled = true;
+        lineRenderer.SetPosition(0, firePos.position); // (인덱스, 위치)
+        lineRenderer.SetPosition(1, hitPosition);
+
+        yield return new WaitForSeconds(0.1f);
+
+        lineRenderer.enabled = false;
     }
 
     public void Fire()
@@ -109,54 +125,61 @@ public class Gun : MonoBehaviour
             Shoot();
         }
     }
+
     private void Shoot()
     {
         Vector3 hitPosition = Vector3.zero;
 
-        RaycastHit hit;
-        if (Physics.Raycast(firePosition.position, firePosition.forward, out hit, gunData.fireDistance))
-        {
-            hitPosition = hit.point;
-            var taret = hit.collider.GetComponent<IDamagable>();
-            //trigger or Collider 맞았니 안맞았니, -> 제일 먼저 맞은녀석이 충돌검사 결과로 넘어옴. out 으로 넘겨야 hit 조회해서 알수 있게됨
-            // hit.point -> '.point' 부딪힌 점 반환하는애
+        RaycastHit hit; // 구조체 → 레이캐스팅 된 결과가 담기는 구조체
 
-            if (taret != null)
+        // Physics.Raycast(시작지점, 나아가는 방향, 정보를 담을 구조체, 거리)
+        // → 충돌했으면 true 안했으면 false return
+        if (Physics.Raycast(firePos.position, firePos.forward, out hit, gunData.fireDistance))
+        {
+            //hit.point 충돌 지점 (위치)
+            hitPosition = hit.point;
+
+            var target = hit.collider.GetComponent<IDamagable>();
+            if (target != null)
             {
-                taret.OnDamage(gunData.damage, hit.point, hit.normal);//@
+                target.OnDamage(gunData.damage, hit.point, hit.normal);
             }
         }
         else
         {
-            hitPosition = firePosition.position + firePosition.forward * gunData.fireDistance;
+            hitPosition = firePos.position + firePos.forward * gunData.fireDistance;
         }
-        StartCoroutine(ShotEffect(hitPosition));
+
+        StartCoroutine(CoShotEffect(hitPosition));
+
         --magAmmo;
+
+        Debug.Log($"{magAmmo}/{ammoRemain}");
         if (magAmmo == 0)
         {
             CurrentState = State.Empty;
         }
     }
 
-    public bool Reload()//@
+    public bool Reload()
     {
-        if (CurrentState == State.Reloading || ammoRemain == 0 || magAmmo == gunData.magCapacity)
-        {
+        if (currentState == State.Reloading || ammoRemain == 0 || magAmmo == gunData.magCapacity)
             return false;
-        }
+
 
         StartCoroutine(CoReload());
         return true;
     }
 
-    public IEnumerator CoReload()
+    private IEnumerator CoReload()
     {
-        CurrentState = State.Reloading;
+        currentState = State.Reloading;
         audioSource.PlayOneShot(gunData.reloadClip);
+
         yield return new WaitForSeconds(gunData.reloadTime);
 
         magAmmo += ammoRemain;
-        if(magAmmo>=gunData.magCapacity)
+        if (magAmmo > gunData.magCapacity)
         {
             magAmmo = gunData.magCapacity;
             ammoRemain -= magAmmo;
@@ -165,6 +188,14 @@ public class Gun : MonoBehaviour
         {
             ammoRemain = 0;
         }
-        CurrentState = State.Ready;
+
+        currentState = State.Ready;
+        Debug.Log($"{magAmmo}/{ammoRemain} << 재장전");
+
+        //int amount = gunData.magCapacity - magAmmo;
+        //int fillAmount = Mathf.Min(amount, ammoRemain);
+
+        //magAmmo += fillAmount;
+        //ammoRemain -= fillAmount;
     }
 }
