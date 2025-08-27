@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class PlayerHealth : LivingEntity
 {
+    public UiHud uiHud;
+
     public Slider healthSlider;
 
     public AudioClip deathClip;
@@ -17,7 +20,40 @@ public class PlayerHealth : LivingEntity
 
     private static readonly int DieHash = Animator.StringToHash("Die");
 
+    //private enum State
+    //{
+    //    Idle,
+    //    Attacked,
+    //    Shoot,
+    //    Die,
+    //}
 
+    //private State currentState;
+
+    //public State Currentstate;
+    //{
+    //    get { return currentState; }
+    //    set
+    //    {
+    //        var prev = currentState;
+    //        currentState = value;
+    //        switch (currentState)
+    //        {
+    //            case State.Idle:
+
+    //                break;
+    //            case State.Attacked:
+
+    //                break;
+    //            case State.Shoot:
+
+    //                break;
+    //            case State.Die:
+
+    //                break;
+    //        }
+    //    }
+    //}
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -69,6 +105,8 @@ public class PlayerHealth : LivingEntity
 
         movement.enabled = false;
         shooter.enabled = false;
+
+        uiHud.isGameOver = true;
     }
 
     public void Heal(int amount)

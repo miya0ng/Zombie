@@ -20,7 +20,6 @@ public class Zombie : LivingEntity
     private State currentState;
 
     private Transform target;
-    public Transform pivot;
 
     public float traceDist = 10.0f;
     public float attackDist = 2.0f;
@@ -34,6 +33,7 @@ public class Zombie : LivingEntity
     private Collider collider;
 
     private AudioSource audioSource;
+
     public State state
     {
         get { return currentState; }
@@ -74,8 +74,6 @@ public class Zombie : LivingEntity
 
     private void Update()
     {
-        blood.transform.position = pivot.transform.position;
-
         switch (currentState)
         {
             case State.Idle:
@@ -157,6 +155,8 @@ public class Zombie : LivingEntity
     {
         base.OnDamage(damage, hitPoint, hitNormal);
         audioSource.PlayOneShot(zombieAttackClip);
+        blood.transform.position = hitPoint;
+        blood.transform.forward = hitNormal;
         blood.Play();
     }
 

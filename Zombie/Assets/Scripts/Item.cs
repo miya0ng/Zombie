@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Item : MonoBehaviour, IItem
@@ -11,6 +12,7 @@ public class Item : MonoBehaviour, IItem
 
     public Types itemType;
     public int value = 10;
+
     public void Use(GameObject go)
     {
         switch (itemType)
@@ -36,6 +38,10 @@ public class Item : MonoBehaviour, IItem
 
     }
 
+    private void Update()
+    {
+
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("player"))
