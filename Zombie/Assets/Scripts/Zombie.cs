@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,10 +12,15 @@ public class Zombie : LivingEntity
         Attack,
         Die
     }
+    public ParticleSystem blood;
+
+    public AudioClip zombieAttackClip;
+    public AudioClip zombieDieClip;
 
     private State currentState;
 
-    public Transform target;
+    private Transform target;
+    public Transform pivot;
 
     public float traceDist = 10.0f;
     public float attackDist = 2.0f;
@@ -25,7 +31,9 @@ public class Zombie : LivingEntity
 
     private Animator animator;
     private NavMeshAgent navMeshAgent;
+    private Collider collider;
 
+    private AudioSource audioSource;
     public State state
     {
         get { return currentState; }
@@ -59,10 +67,15 @@ public class Zombie : LivingEntity
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        collider = GetComponent<Collider>();
+        audioSource = GetComponent<AudioSource>();
+        collider.enabled = true;
     }
 
     private void Update()
     {
+        blood.transform.position = pivot.transform.position;
+
         switch (currentState)
         {
             case State.Idle:
@@ -82,7 +95,7 @@ public class Zombie : LivingEntity
 
     private void UpdateDie()
     {
-        throw new NotImplementedException();
+       
     }
 
     private void UpdateAttack()
@@ -131,6 +144,8 @@ public class Zombie : LivingEntity
         {
             state = State.Trace;
         }
+
+        target = FindTarget(traceDist);
     }
 
     protected override void OnEnable()
@@ -141,11 +156,29 @@ public class Zombie : LivingEntity
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
         base.OnDamage(damage, hitPoint, hitNormal);
+        audioSource.PlayOneShot(zombieAttackClip);
+        blood.Play();
     }
 
     protected override void Die()
     {
         base.Die();
         state = State.Die;
+        collider.enabled = false;
+        audioSource.PlayOneShot(zombieDieClip);
+    }
+
+    public LayerMask targetLayer;
+    protected Transform FindTarget(float radius)
+    {
+        var colliders =  Physics.OverlapSphere(transform.position, radius, targetLayer.value);
+        if(colliders.Length == 0)
+        {
+            return null;
+        }
+
+        var target = colliders.OrderBy(x => Vector3.Distance(x.transform.position, transform.position)).First();
+
+        return target.transform;
     }
 }
