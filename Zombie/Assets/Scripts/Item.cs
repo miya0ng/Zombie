@@ -35,7 +35,11 @@ public class Item : MonoBehaviour, IItem
                 break;
         }
         Destroy(gameObject);
+    }
 
+    public void Spawn()
+    {
+       // Instantiate(this);
     }
 
     private void Update()

@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Audio;
 
 public class Zombie : LivingEntity
 {
@@ -32,8 +33,9 @@ public class Zombie : LivingEntity
     private NavMeshAgent navMeshAgent;
     private Collider collider;
 
-    private AudioSource audioSource;
+    public Renderer zombieRenderer;
 
+    private AudioSource audioSource;
     public State state
     {
         get { return currentState; }
@@ -71,6 +73,14 @@ public class Zombie : LivingEntity
         audioSource = GetComponent<AudioSource>();
         collider.enabled = true;
     }
+
+    public void SetUp(ZombieData data)
+    {
+        MaxHealth = data.maxHp;
+        damage = data.damange;
+        navMeshAgent.speed = data.speed;
+        zombieRenderer.material.color = data.skinColor;
+    }    
 
     private void Update()
     {
@@ -141,6 +151,7 @@ public class Zombie : LivingEntity
         if (target != null && Vector3.Distance(transform.position, target.position) <= traceDist)
         {
             state = State.Trace;
+            return;
         }
 
         target = FindTarget(traceDist);
@@ -149,6 +160,9 @@ public class Zombie : LivingEntity
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        collider.enabled = true;
+        currentState = State.Idle;
     }
 
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)

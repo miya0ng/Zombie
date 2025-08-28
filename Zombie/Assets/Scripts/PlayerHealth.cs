@@ -112,7 +112,7 @@ public class PlayerHealth : LivingEntity
     public void Heal(int amount)
     {
         Health = Mathf.Min(Health + amount, MaxHealth);
-        Debug.Log("heal");
+       // Debug.Log("heal");
         healthSlider.value = Health / MaxHealth;
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    // 상태패턴 위한 enum
+    public UiHud uiHud;
     public enum State
     {
         Ready,
@@ -154,7 +155,7 @@ public class Gun : MonoBehaviour
 
         --magAmmo;
 
-        Debug.Log($"{magAmmo}/{ammoRemain}");
+       // Debug.Log($"{magAmmo}/{ammoRemain}");
         if (magAmmo == 0)
         {
             CurrentState = State.Empty;
@@ -178,7 +179,19 @@ public class Gun : MonoBehaviour
 
         yield return new WaitForSeconds(gunData.reloadTime);
 
-        magAmmo += ammoRemain;
+        int fillAmmo = gunData.magCapacity - magAmmo;
+        if(fillAmmo < ammoRemain)
+        {
+            magAmmo += fillAmmo;
+            ammoRemain = fillAmmo;
+        }
+        else
+        {
+            magAmmo += ammoRemain;
+
+        }
+
+            magAmmo += ammoRemain;
         if (magAmmo > gunData.magCapacity)
         {
             magAmmo = gunData.magCapacity;
@@ -190,7 +203,7 @@ public class Gun : MonoBehaviour
         }
 
         currentState = State.Ready;
-        Debug.Log($"{magAmmo}/{ammoRemain} << 재장전");
+        //Debug.Log($"{magAmmo}/{ammoRemain} << 재장전");
 
         //int amount = gunData.magCapacity - magAmmo;
         //int fillAmount = Mathf.Min(amount, ammoRemain);
@@ -203,6 +216,6 @@ public class Gun : MonoBehaviour
     {
         ammoRemain = Mathf.Min(ammoRemain + amount, gunData.startAmmoRemain);
 
-        Debug.Log("AddAmmo");
+        //Debug.Log("AddAmmo");
     }
 }
