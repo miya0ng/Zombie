@@ -67,7 +67,8 @@ public class ItemSpawner : MonoBehaviour
             {
                 var pos = result;
                 pos.y += 0.5f;
-                Instantiate(items[Random.Range(0, items.Length)], pos, Quaternion.identity);
+                var item = items[Random.Range(0, items.Length)];
+                Instantiate(item, pos, item.transform.rotation);
             }
         }
     }
